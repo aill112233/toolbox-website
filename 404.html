@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>页面不存在 - 实用工具箱</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<!--
+  404 页刻意不依赖外部 CSS / JS：
+  GitHub Pages 下用户访问的可能是任意深度的路径（如 /仓库名/a/b/），
+  此时相对路径会失效，因此这里把样式内联、并用一段极小的脚本修正返回首页的链接。
+-->
+<style>
+  :root {
+    --bg: #0b0d16; --card: #151a33; --line: #262c52; --text: #e8eaf6; --muted: #9aa3c7;
+    --grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #a855f7 100%);
+    --font: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.65; min-height: 100vh; display: flex; flex-direction: column; }
+  a { text-decoration: none; color: inherit; }
+  header { border-bottom: 1px solid var(--line); background: rgba(11,13,22,.84); }
+  .nav-inner { max-width: 1140px; margin: 0 auto; padding: 0 22px; height: 62px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  .nav-inner img { width: 32px; height: 32px; border-radius: 9px; }
+  .nav-inner small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; }
+  main { flex: 1; display: grid; place-items: center; text-align: center; padding: 70px 22px; }
+  .code { font-size: 92px; font-weight: 800; line-height: 1; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h1 { font-size: 26px; margin-top: 8px; }
+  p { color: var(--muted); margin: 14px 0 26px; font-size: 15px; }
+  .btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 999px; font-size: 15px; font-weight: 600; transition: transform .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--grad); color: #fff; box-shadow: 0 8px 24px rgba(124,92,246,.4); }
+  .btn-ghost { background: rgba(255,255,255,.06); border: 1px solid var(--line); }
+  footer { border-top: 1px solid var(--line); color: #7f88ad; font-size: 12.5px; text-align: center; padding: 22px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <img id="navLogo" src="assets/img/logo.png" alt="实用工具箱">
+    <span>实用工具箱<small>WinToolbox · 三款 Windows 工具</small></span>
+  </div>
+</header>
+
+<main>
+  <div>
+    <div class="code">404</div>
+    <h1>这个页面不存在</h1>
+    <p>链接可能已经失效，或者地址输入有误。<br>三款软件的下载都在首页。</p>
+    <div class="btns">
+      <a class="btn btn-primary" id="homeLink" href="index.html">返回首页</a>
+      <a class="btn btn-ghost" id="dlLink" href="index.html#download">直接去下载</a>
+    </div>
+  </div>
+</main>
+
+<footer>© <span id="y"></span> 实用工具箱 · 本站为软件下载与说明页面</footer>
+
+<script>
+// 修正返回链接：用户访问的可能是任意深度的路径（如 /仓库名/a/b/），
+// 相对路径会失效，因此依次探测“站点根目录”，用能取到 logo 的那个作为基准。
+(function () {
+  var seg = location.pathname.split('/').filter(Boolean);
+  var candidates = ['/'];
+  if (seg.length > 0) { candidates.push('/' + seg[0] + '/'); }
+
+  function apply(base) {
+    var home = document.getElementById('homeLink');
+    var dl = document.getElementById('dlLink');
+    var logo = document.getElementById('navLogo');
+    if (home) { home.href = base; }
+    if (dl) { dl.href = base + '#download'; }
+    if (logo) { logo.src = base + 'assets/img/logo.png'; }
+  }
+
+  var i = 0;
+  (function next() {
+    if (i >= candidates.length) { apply('./'); return; }   // 本地双击打开等场景
+    var cand = candidates[i++];
+    var probe = new Image();
+    probe.onload = function () { apply(cand); };
+    probe.onerror = function () { next(); };
+    probe.src = cand + 'assets/img/logo.png';
+  })();
+
+  document.getElementById('y').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
